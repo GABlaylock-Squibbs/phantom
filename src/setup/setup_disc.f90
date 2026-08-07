@@ -121,6 +121,9 @@ module setup
  !--resolution
  integer :: np,np_dust(maxdustlarge)
 
+ !--symmetric disc
+ integer :: symmetric
+
  !--setup filename
  character(len=100) :: filename
 
@@ -1406,7 +1409,8 @@ subroutine setup_discs(id,fileprefix,hfact,gamma,npart,polyk,&
                         prefix          = prefix,             &
                         lumdisc         = lumdisc_logi,       &
                         L_star          = L_star(1),          &
-                        T_bg            = T_bg)
+                        T_bg            = T_bg,               &
+                        symmetric       = symmetric)
 
           npart = npart + npingasdisc
           npartoftype(igas) = npartoftype(igas) + npingasdisc
@@ -2656,11 +2660,24 @@ subroutine setup_interactive(id)
     np_dust = 0
  endif
 
+
+ !--symmetric disc
+ print "(/,a)",'========================'
+ print "(a)",  '+++  SYMMETRIC DISC  +++'
+ print "(a)",  '========================'
+ call prompt('Symmetric or non-symmetric disc?'//new_line('A')//&
+             '0=symmetric'//new_line('A')//&
+             '1=non-symmetric'//new_line('A'), symmetric, 0, 1)
+
  !--planets
  print "(/,a)",'================='
  print "(a)",  '+++  PLANETS  +++'
  print "(a)",  '================='
  call prompt('How many planets?',nplanets,0,maxplanets)
+
+
+
+
 
  !--simulation time
  print "(/,a)",'================'
@@ -3071,6 +3088,10 @@ subroutine write_setupfile(filename)
        endif
     endif
  endif
+
+!--symmetric disc
+ write(iunit,"(/,a)") '# Symmetric setup'
+ call write_inopt(symmetric,'symmetric','0=yes, 1=no',iunit)
 
  !--planets
  write(iunit,"(/,a)") '# set planets'
@@ -3496,6 +3517,10 @@ subroutine read_setupfile(filename,ierr)
        endif
     endif
  endif
+
+
+!--symmetric disc
+ call read_inopt(symmetric,'symmetric',db,min=0,max=1,errcount=nerr)
 
  !--planets
  call read_inopt(nplanets,'nplanets',db,min=0,max=maxplanets,errcount=nerr)

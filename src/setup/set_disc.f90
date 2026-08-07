@@ -78,7 +78,7 @@ subroutine set_disc(id,master,mixture,nparttot,npart,npart_start,rmin,rmax, &
                     position_angle,inclination,ismooth,alpha,rwarp,warp_smoothl, &
                     e0,eindex,phiperi,eccprofile, &
                     bh_spin,bh_spin_angle,rref,enc_mass,r_grid,writefile,ierr,prefix, &
-                    lumdisc,L_star,T_bg,verbose)
+                    lumdisc,L_star,T_bg,verbose,symmetric)
  use io,   only:stdout
  use part, only:maxp,idust,maxtypes
  use centreofmass, only:get_total_angular_momentum
@@ -110,6 +110,7 @@ subroutine set_disc(id,master,mixture,nparttot,npart,npart_start,rmin,rmax, &
  logical,           intent(in),    optional :: lumdisc
  real,              intent(in),    optional :: L_star,T_bg
  integer,           intent(out),   optional :: ierr
+ integer,           intent(in),    optional :: symmetric
  character(len=20), intent(in),    optional :: prefix
  integer :: itype,npart_tot,npart_start_count,i,npart_set
  integer :: sigmaprofile,sigmaprofiledust
@@ -418,7 +419,7 @@ subroutine set_disc(id,master,mixture,nparttot,npart,npart_start,rmin,rmax, &
                          R_indust,R_outdust,phi_min,phi_max,sigma_norm,sigma_normdust,&
                          sigmaprofile,sigmaprofiledust,R_c,R_c_dust,p_index,p_inddust,cs0,cs0dust,&
                          q_index,q_inddust,e_0,e_index,phi_peri,ecc_arr,a_arr,ecc_profile,star_m,G,&
-                         particle_mass,hfact,itype,xyzh,honH,do_verbose,lumdisc_setup,L_lumdisc,Tbg_lumdisc,gamma)
+                         particle_mass,hfact,itype,xyzh,honH,do_verbose,lumdisc_setup,L_lumdisc,Tbg_lumdisc,gamma,symmetric)
 
  if (present(inclination)) then
     incl = inclination
@@ -587,7 +588,7 @@ subroutine set_disc_positions(npart_tot,npart_start_count,do_mixture,R_ref,R_in,
                               R_indust,R_outdust,phi_min,phi_max,sigma_norm,sigma_normdust,&
                               sigmaprofile,sigmaprofiledust,R_c,R_c_dust,p_index,p_inddust,cs0,cs0dust,&
                               q_index,q_inddust,e_0,e_index,phi_peri,ecc_arr,a_arr,ecc_profile,&
-                              star_m,G,particle_mass,hfact,itype,xyzh,honH,verbose,lumdisc,L_star,T_bg,gamma)
+                              star_m,G,particle_mass,hfact,itype,xyzh,honH,verbose,lumdisc,L_star,T_bg,gamma,symmetric)
  use io,             only:id,master
  use part,           only:set_particle_type
  use random,         only:ran2
@@ -602,6 +603,7 @@ subroutine set_disc_positions(npart_tot,npart_start_count,do_mixture,R_ref,R_in,
  integer, intent(in)    :: itype,sigmaprofile,sigmaprofiledust,ecc_profile
  real,    intent(inout) :: xyzh(:,:)
  real,    intent(out)   :: honH
+ integer, intent(in), optional :: symmetric
  integer :: i,iseed,ninz,n_to_place
  integer :: ipart
  real    :: rand_no,randtest,R,phi,zi,ea,Mmean
@@ -617,10 +619,21 @@ subroutine set_disc_positions(npart_tot,npart_start_count,do_mixture,R_ref,R_in,
  ninz = 0
  !--n_to_place determines how many particles are initialised for each i in the do loop
  !--n_to_place=2 (assumes symmetry wrt origin), n_to_place=1 sets position individually
- n_to_place=2
+
+ if (symmetric == 0) then
+   n_to_place=2
+ else if (symmetric == 1) then
+   n_to_place=1
+ else
+   stop
+ end if
+
+!  n_to_place=2
  if (abs(e_0)>tiny(e_0) .or. ecc_profile  /=  0) then
     n_to_place=1
  endif
+
+ print*, ">>> n_to_place = ", n_to_place
 
  !--converting phi_peri to radians
  phi_perirad=phi_peri*3.1415/180.
