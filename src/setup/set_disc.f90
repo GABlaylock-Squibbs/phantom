@@ -618,14 +618,16 @@ subroutine set_disc_positions(npart_tot,npart_start_count,do_mixture,R_ref,R_in,
  honH = 0.
  ninz = 0
 
+
+
  !--n_to_place determines how many particles are initialised for each i in the do loop
  !--n_to_place=2 (assumes symmetry wrt origin), n_to_place=1 sets position individually
-
+ !-- default option is symmetric
  if (symmetric == 1) then
    n_to_place=2
  else if (symmetric == 0) then
    n_to_place=1
- end if
+ endif
 
 !  n_to_place=2
  if (abs(e_0)>tiny(e_0) .or. ecc_profile  /=  0) then

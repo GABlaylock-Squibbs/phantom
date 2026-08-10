@@ -3091,7 +3091,7 @@ subroutine write_setupfile(filename)
 
 !--symmetric disc
  write(iunit,"(/,a)") '# Symmetric setup'
- call write_inopt(symmetric,'symmetric','0=yes, 1=no',iunit)
+ call write_inopt(symmetric,'symmetric','0=nonsymmetric, 1=symmetric',iunit)
 
  !--planets
  write(iunit,"(/,a)") '# set planets'
@@ -3519,7 +3519,7 @@ subroutine read_setupfile(filename,ierr)
  endif
 
 
-!--symmetric disc
+ !--symmetric disc
  call read_inopt(symmetric,'symmetric',db,min=0,max=1,errcount=nerr)
 
  !--planets
