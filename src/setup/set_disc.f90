@@ -617,23 +617,20 @@ subroutine set_disc_positions(npart_tot,npart_start_count,do_mixture,R_ref,R_in,
  iseed = -34598 + (itype - igas)
  honH = 0.
  ninz = 0
+
  !--n_to_place determines how many particles are initialised for each i in the do loop
  !--n_to_place=2 (assumes symmetry wrt origin), n_to_place=1 sets position individually
 
- if (symmetric == 0) then
+ if (symmetric == 1) then
    n_to_place=2
- else if (symmetric == 1) then
+ else if (symmetric == 0) then
    n_to_place=1
- else
-   stop
  end if
 
 !  n_to_place=2
  if (abs(e_0)>tiny(e_0) .or. ecc_profile  /=  0) then
     n_to_place=1
  endif
-
- print*, ">>> n_to_place = ", n_to_place
 
  !--converting phi_peri to radians
  phi_perirad=phi_peri*3.1415/180.

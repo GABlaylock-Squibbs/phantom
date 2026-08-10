@@ -122,7 +122,7 @@ module setup
  integer :: np,np_dust(maxdustlarge)
 
  !--symmetric disc
- integer :: symmetric
+ integer :: symmetric = 1
 
  !--setup filename
  character(len=100) :: filename
@@ -2665,9 +2665,9 @@ subroutine setup_interactive(id)
  print "(/,a)",'========================'
  print "(a)",  '+++  SYMMETRIC DISC  +++'
  print "(a)",  '========================'
- call prompt('Symmetric or non-symmetric disc?'//new_line('A')//&
-             '0=symmetric'//new_line('A')//&
-             '1=non-symmetric'//new_line('A'), symmetric, 0, 1)
+ call prompt('Symmetric or nonsymmetric disc?'//new_line('A')//&
+             '0=nonsymmetric'//new_line('A')//&
+             '1=symmetric'//new_line('A'),symmetric,0,1)
 
  !--planets
  print "(/,a)",'================='
